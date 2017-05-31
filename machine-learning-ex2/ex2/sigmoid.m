@@ -9,9 +9,9 @@ g = zeros(size(z));
 % Instructions: Compute the sigmoid of each value of z (z can be a matrix,
 %               vector or scalar).
 
-
-
-
+for i = 1:size(z)
+    g(i) = pinv(1 + power(e, -1 * z(i)));
+end
 
 % =============================================================
 
