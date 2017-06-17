@@ -24,11 +24,13 @@ Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):en
 
 % Setup some useful variables
 m = size(X, 1);
+N1 = size(Theta1);
+N2 = size(Theta2);
          
 % You need to return the following variables correctly 
 J = 0;
-Theta1_grad = zeros(size(Theta1));
-Theta2_grad = zeros(size(Theta2));
+Theta1_grad = zeros(N1);
+Theta2_grad = zeros(N2);
 
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
@@ -62,23 +64,42 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% recode y to Y
+I = eye(num_labels);
+Y = zeros(m, num_labels);
+for i = 1 : m
+  Y(i, :)= I(y(i), :);
+end
 
+% Forward Propagation
+a1 = [ones(m, 1), X];
+z2 = a1 * Theta1';
+a2 = [ones(m, 1), sigmoid(z2)];
+z3 = a2 * Theta2';
+a3 = sigmoid(z3);
+h = a3;
 
+% Regulariation
+p = sum(sum(power(Theta1(:, 2: end), 2))) + sum(sum(power(Theta2(:, 2: end), 2)));
 
+% Evaluate loss function J
+J = (sum(sum((-Y).*log(h) - (1-Y).*log(1-h))) + lambda * p/2)/m;
 
+% Backward Propagation
+sigma3 = a3 - Y ;
+sigma2 = (sigma3 * Theta2).*sigmoidGradient([ones(m, 1), z2]);
+sigma2 = sigma2(:, 2:end);
 
+% accumulate gradients
+delta_1 = sigma2' * a1;
+delta_2 = sigma3' * a2;
 
+% calculate regularized gradient
+p1 = [zeros(N1, 1) Theta1(:, 2:end)];
+p2 = [zeros(N2, 1) Theta2(:, 2:end)];
 
-
-
-
-
-
-
-
-
-
-
+Theta1_grad = (delta_1 + lambda * p1)/m;
+Theta2_grad = (delta_2 + lambda * p2)/m;
 
 % -------------------------------------------------------------
 
