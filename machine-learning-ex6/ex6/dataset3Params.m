@@ -23,11 +23,24 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+options = [0.01, 0.03, 0.1, 0.3, 1, 3, 10];
+options_count = size(options, 2);
 
-
-
-
-
+min_prediction_error = inf;
+for i = 1 : options_count
+  for j = 1 : options_count
+    C_test = options(i);
+	sigma_test = options(j);
+    model = svmTrain(X, y, C_test, @(x1, x2) gaussianKernel(x1, x2, sigma_test));
+    predictions = svmPredict(model, Xval);
+    prediction_error = mean(double(predictions ~= yval));
+	if (prediction_error < min_prediction_error)
+	  min_prediction_error = prediction_error;
+	  C = C_test;
+	  sigma = sigma_test;
+	end
+  end
+end
 
 % =========================================================================
 
