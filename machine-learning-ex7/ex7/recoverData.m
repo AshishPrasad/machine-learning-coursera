@@ -5,9 +5,11 @@ function X_rec = recoverData(Z, U, K)
 %   original data that has been reduced to K dimensions. It returns the
 %   approximate reconstruction in X_rec.
 %
+m = size(Z, 1);
+n = size(U, 1);
 
 % You need to return the following variables correctly.
-X_rec = zeros(size(Z, 1), size(U, 1));
+X_rec = zeros(m, n);
 
 % ====================== YOUR CODE HERE ======================
 % Instructions: Compute the approximation of the data by projecting back
@@ -19,8 +21,11 @@ X_rec = zeros(size(Z, 1), size(U, 1));
 %                    recovered_j = v' * U(j, 1:K)';
 %
 %               Notice that U(j, 1:K) is a row vector.
-%               
-
+%
+U_reduce = U(:, 1:K);               
+for j = 1 : m
+  X_rec(j, :) = (U_reduce * Z(j, :)')';
+end
 
 
 % =============================================================
